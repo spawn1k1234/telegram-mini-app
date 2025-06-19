@@ -2,17 +2,20 @@ import React, { useEffect, useState } from "react";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const telegram = window.Telegram.WebApp;
-    const userData = telegram?.initDataUnsafe?.user;
+    const tg = window?.Telegram?.WebApp;
 
-    if (userData) {
-      setUser(userData);
+    if (tg && tg.initDataUnsafe?.user) {
+      setUser(tg.initDataUnsafe.user);
+    } else {
+      setError("Открой через Telegram, а не напрямую в браузере!");
     }
   }, []);
 
-  if (!user) return <p>Загрузка...</p>;
+  if (error) return <p style={{ textAlign: "center" }}>{error}</p>;
+  if (!user) return <p style={{ textAlign: "center" }}>Загрузка...</p>;
 
   return (
     <div style={{ textAlign: "center", padding: "2rem" }}>
