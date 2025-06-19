@@ -1,58 +1,44 @@
-// src/components/Profile.js
 import React, { useEffect, useState } from "react";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Запрос к серверной функции для получения данных пользователя
-    fetch("/api/telegram")
-      .then((response) => response.json())
-      .then((data) => setUser(data))
-      .catch((error) => console.error("Error fetching user data:", error));
+    const telegram = window.Telegram.WebApp;
+    const userData = telegram?.initDataUnsafe?.user;
+
+    if (userData) {
+      setUser(userData);
+    }
   }, []);
 
   if (!user) return <p>Загрузка...</p>;
 
   return (
-    <div style={styles.container}>
-      <h1>Профиль</h1>
-      <div style={styles.profile}>
+    <div style={{ textAlign: "center", padding: "2rem" }}>
+      {user.photo_url && (
         <img
-          src={user.photo_url || "https://via.placeholder.com/150"}
-          alt="Avatar"
-          style={styles.avatar}
+          src={user.photo_url}
+          alt="avatar"
+          style={{ borderRadius: "50%", width: 100, height: 100 }}
         />
-        <p>Никнейм: {user.username}</p>
-        <p>Номер телефона: {user.phone}</p>
+      )}
+      <h2>
+        {user.first_name} {user.last_name}
+      </h2>
+      <p>
+        <strong>Username:</strong> @{user.username}
+      </p>
+      <p>
+        <strong>ID:</strong> {user.id}
+      </p>
+      {user.phone_number && (
         <p>
-          Имя: {user.first_name} {user.last_name}
+          <strong>Phone:</strong> {user.phone_number}
         </p>
-        <p>Телеграм ID: {user.id}</p>
-      </div>
-      <button style={styles.button}>Нажми меня</button>
+      )}
     </div>
   );
-};
-
-const styles = {
-  container: {
-    textAlign: "center",
-    marginTop: "50px",
-  },
-  profile: {
-    margin: "20px 0",
-  },
-  avatar: {
-    borderRadius: "50%",
-    width: "150px",
-    height: "150px",
-  },
-  button: {
-    padding: "10px 20px",
-    fontSize: "16px",
-    cursor: "pointer",
-  },
 };
 
 export default Profile;
