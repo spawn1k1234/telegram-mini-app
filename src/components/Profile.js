@@ -5,16 +5,21 @@ const Profile = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const tg = window?.Telegram?.WebApp;
+    try {
+      const tg = window?.Telegram?.WebApp;
 
-    if (tg && tg.initDataUnsafe?.user) {
-      setUser(tg.initDataUnsafe.user);
-    } else {
-      setError("Открой через Telegram, а не напрямую в браузере!");
+      if (tg?.initDataUnsafe?.user) {
+        setUser(tg.initDataUnsafe.user);
+      } else {
+        setError("Открой через Telegram, а не напрямую в браузере!");
+      }
+    } catch (err) {
+      setError("Ошибка получения данных пользователя.");
     }
   }, []);
 
-  if (error) return <p style={{ textAlign: "center" }}>{error}</p>;
+  if (error)
+    return <p style={{ textAlign: "center", color: "red" }}>{error}</p>;
   if (!user) return <p style={{ textAlign: "center" }}>Загрузка...</p>;
 
   return (
@@ -22,16 +27,18 @@ const Profile = () => {
       {user.photo_url && (
         <img
           src={user.photo_url}
-          alt="avatar"
+          alt="Аватар"
           style={{ borderRadius: "50%", width: 100, height: 100 }}
         />
       )}
       <h2>
-        {user.first_name} {user.last_name}
+        {user.first_name} {user.last_name || ""}
       </h2>
-      <p>
-        <strong>Username:</strong> @{user.username}
-      </p>
+      {user.username && (
+        <p>
+          <strong>Username:</strong> @{user.username}
+        </p>
+      )}
       <p>
         <strong>ID:</strong> {user.id}
       </p>
